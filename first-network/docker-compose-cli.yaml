@@ -138,7 +138,10 @@ services:
         - ../app/fcc-server/fccserver:/opt/fccserver
         - ../app/fcc-server/config.yaml:/opt/config.yaml
         - ./crypto-config/:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
-        - ./channel-artifacts/:/opt
+        - ./channel-artifacts/Org1MSPanchors.tx:/opt/Org1MSPanchors.tx
+        - ./channel-artifacts/Org2MSPanchors.tx:/opt/Org2MSPanchors.tx
+        - ./channel-artifacts/Org3MSPanchors.tx:/opt/Org3MSPanchors.tx
+        - ./channel-artifacts/channel.tx:/opt/channel.tx
         - ../chaincode/:/opt/gopath/src/github.com/chaincode
     ports:
       - 1206:1206
