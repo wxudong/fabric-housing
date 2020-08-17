@@ -27,30 +27,22 @@ import (
 )
 
 func main() {
-	//initlog()
-
 	log.SetPrefix("[fcc-server] ")
-	//init system
+	time.Sleep(time.Second*5)
 	err := service.InitOnSystemStart()
 	if err != nil {
 		log.Println("error on init system:", err.Error())
 		return
 	}
-	//init http
 	inithttp()
-	//println("service started.")
+	log.Println("Welcome to fabric network demo......")
 }
 
 func inithttp() {
 	gin.SetMode(gin.ReleaseMode)
 	app := gin.New()
-	// recover
 	app.Use(middleware.RecoveryMiddleware())
-
-	// routers
 	routers.RegisterRouter(app)
-
-	//go initHTTPServer(app)
 	initHTTPServer(app)
 
 }
@@ -64,6 +56,6 @@ func initHTTPServer(handler http.Handler) {
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  15 * time.Second,
 	}
-	log.Println("Server started on ", srv.Addr)
+	log.Println("Server started on", srv.Addr)
 	srv.ListenAndServe()
 }

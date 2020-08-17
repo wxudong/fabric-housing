@@ -29,7 +29,7 @@ func InitOnSystemStart() (err error) {
 	}
 	//for now ,if Chaincode service initial failed ,don't break startup process.
 	// give system a chance to reinitial on later.
-	ccservice.InitCCOnStart()
+	ccservice.Init()
 	return nil
 }
 

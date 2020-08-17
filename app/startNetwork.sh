@@ -37,6 +37,9 @@ cd ../first-network
 echo y | ./byfn.sh down
 echo y | ./byfn.sh up -a -s couchdb
 
+
+docker exec appcli ./fccserver
+
 # sleep 10
 
 # cd ../app
