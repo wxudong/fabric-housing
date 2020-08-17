@@ -35,11 +35,13 @@ removeUnwantedImages
 cd ../first-network
 
 echo y | ./byfn.sh down
-echo y | ./byfn.sh up -a -s couchdb -o etcdraft
+echo y | ./byfn.sh up -a -s couchdb
 
-cd ../app
-docker-compose -f docker-compose-appcli.yaml up -d
-cd ..
+# sleep 10
+
+# cd ../app
+# docker-compose -f docker-compose-appcli.yaml up -d
+# cd ..
 
 
 
