@@ -31,8 +31,7 @@ type CNetcon struct {
 }
 
 func NetconCreate(uuid, netconid, applya, applyb, addr, area, balance string) (res comm.ResResult) {
-	cclient = GetChannelClient()
-	if cclient == nil {
+	if org1ChannelClient == nil {
 		res.Code = 1
 		res.Status = "Chaincode service uninitialed."
 		return
@@ -49,7 +48,7 @@ func NetconCreate(uuid, netconid, applya, applyb, addr, area, balance string) (r
 		return
 	}
 	//new
-	bs, err := CCinvoke(cclient, ccNetcon, "create",
+	bs, err := CCinvoke(org1ChannelClient, ccNetcon, "create",
 		[]string{uuid, netconid, applya, applyb, addr, area, balance})
 	if err != nil {
 		res.Code = 1
@@ -62,13 +61,12 @@ func NetconCreate(uuid, netconid, applya, applyb, addr, area, balance string) (r
 }
 
 func NetconQueryByNetconid(netconid string) (res comm.ResResult) {
-	cclient = GetChannelClient()
-	if cclient == nil {
+	if org1ChannelClient == nil {
 		res.Code = 1
 		res.Status = "Chaincode service uninitialed."
 		return
 	}
-	bs, err := CCquery(cclient, ccNetcon, "queryByNetconID", []string{netconid})
+	bs, err := CCquery(org1ChannelClient, ccNetcon, "queryByNetconID", []string{netconid})
 	if err != nil {
 		res.Code = 1
 		res.Status = err.Error()
@@ -89,13 +87,12 @@ func NetconQueryByNetconid(netconid string) (res comm.ResResult) {
 }
 
 func NetconQueryAll() (res comm.ResResult) {
-	cclient = GetChannelClient()
-	if cclient == nil {
+	if org1ChannelClient == nil {
 		res.Code = 1
 		res.Status = "Chaincode service uninitialed."
 		return
 	}
-	bs, err := CCquery(cclient, ccNetcon, "queryAll", nil)
+	bs, err := CCquery(org1ChannelClient, ccNetcon, "queryAll", nil)
 	if err != nil {
 		res.Code = 1
 		res.Status = err.Error()

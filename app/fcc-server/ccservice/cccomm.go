@@ -70,11 +70,14 @@ const (
 var (
 	// SDK
 	sdk *fabsdk.FabricSDK
-	cclient *channel.Client
 	// Org MSP clients
 	org1MspClient *mspclient.Client
 	org2MspClient *mspclient.Client
 	org3MspClient *mspclient.Client
+
+	org1ChannelClient *channel.Client
+ 	org2ChannelClient *channel.Client
+ 	org3ChannelClient *channel.Client
 
 	initArgs = [][]byte{}
 )
@@ -89,6 +92,9 @@ type multiorgContext struct {
 	org1ResMgmt            *resmgmt.Client
 	org2ResMgmt            *resmgmt.Client
 	org3ResMgmt            *resmgmt.Client
+	org1ChannelClientContext   contextAPI.ChannelProvider
+	org2ChannelClientContext   contextAPI.ChannelProvider
+	org3ChannelClientContext   contextAPI.ChannelProvider
 }
 
 func setup() error {
@@ -134,19 +140,22 @@ func Init() {
 		org1AdminClientContext: sdk.Context(fabsdk.WithUser(org1AdminUser), fabsdk.WithOrg(org1)),
 		org2AdminClientContext: sdk.Context(fabsdk.WithUser(org2AdminUser), fabsdk.WithOrg(org2)),
 		org3AdminClientContext: sdk.Context(fabsdk.WithUser(org3AdminUser), fabsdk.WithOrg(org3)),
+		org1ChannelClientContext:   sdk.ChannelContext(channelID, fabsdk.WithUser(org1User), fabsdk.WithOrg(org1)),
+		org2ChannelClientContext:   sdk.ChannelContext(channelID, fabsdk.WithUser(org2User), fabsdk.WithOrg(org2)),
+		org3ChannelClientContext:   sdk.ChannelContext(channelID, fabsdk.WithUser(org3User), fabsdk.WithOrg(org3)),
 	}
 
-	setupClientContextsAndChannel(sdk, &mc)
+	setupClientContextsAndChannel(&mc)
 
 	createAndJoinChannel(&mc)
 
 	createAndInstantiateCC(&mc)
 
-	InitCCOnStart()
+	initChannelClient(&mc)
 
 }
 
-func setupClientContextsAndChannel(sdk *fabsdk.FabricSDK, mc *multiorgContext) {
+func setupClientContextsAndChannel(mc *multiorgContext) {
 	// Org1 resource management client (Org1 is default org)
 	org1RMgmt, err := resmgmt.New(mc.org1AdminClientContext)
 	if err != nil {
@@ -535,22 +544,34 @@ func isCCInstantiated(resMgmt *resmgmt.Client, channelID, ccName, ccVersion stri
 	return installedOnAllPeers
 }
 
-func InitCCOnStart() {
+func initChannelClient(mc *multiorgContext) {
 	var err error
-	clientContext := sdk.ChannelContext(channelID, fabsdk.WithUser(org1User), fabsdk.WithOrg(org1))
-	if clientContext == nil {
-		log.Println("WARN: init Chaincode clientContext error:", err.Error())
-	} else {
-		cclient, err = channel.New(clientContext)
-		if err != nil {
-			log.Println("WARN: init Chaincode cclient error:", err.Error())
-		}
+	org1ChannelClient, err = channel.New(mc.org1ChannelClientContext)
+	if err != nil {
+		log.Println("WARN: init org1 chaincode cclient error:", err.Error())
 	}
-	log.Println("Chaincode client initialed successfully.")
+	org2ChannelClient, err = channel.New(mc.org2ChannelClientContext)
+	if err != nil {
+		log.Println("WARN: init org2 chaincode cclient error:", err.Error())
+	}
+	org3ChannelClient, err = channel.New(mc.org3ChannelClientContext)
+	if err != nil {
+		log.Println("WARN: init org3 chaincode cclient error:", err.Error())
+	}
 }
 
-func GetChannelClient() *channel.Client {
-	return cclient
+func GetChannelClient(org string) *channel.Client {
+	switch {
+      case org == "Org1" :
+         return org1ChannelClient
+      case org == "Org2" :
+         return org2ChannelClient
+      case org == "Org3" :
+         return org3ChannelClient    
+      default:
+         log.Println("Not found org chananel client.")
+    }
+    return nil
 }
 
 func CCinvoke(channelClient *channel.Client, ccname, fcn string, args []string) ([]byte, error) {

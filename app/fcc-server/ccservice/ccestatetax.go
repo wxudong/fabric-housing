@@ -30,8 +30,7 @@ type CEstateTax struct {
 }
 
 func EstateTaxCreate(uuid, taxid, bookid, taxer, area, tax string) (res comm.ResResult) {
-	cclient = GetChannelClient()
-	if cclient == nil {
+	if org3ChannelClient == nil {
 		res.Code = 1
 		res.Status = "Chaincode service uninitialed."
 		return
@@ -47,7 +46,7 @@ func EstateTaxCreate(uuid, taxid, bookid, taxer, area, tax string) (res comm.Res
 		res.Status = taxid+" already exited!"
 		return
 	}
-	bs, err := CCinvoke(cclient, ccEstatetax, "create",
+	bs, err := CCinvoke(org3ChannelClient, ccEstatetax, "create",
 		[]string{uuid, taxid, bookid, taxer, area, tax})
 	if err != nil {
 		res.Code = 1
@@ -60,13 +59,12 @@ func EstateTaxCreate(uuid, taxid, bookid, taxer, area, tax string) (res comm.Res
 }
 
 func EstateTaxQueryByTaxid(taxid string) (res comm.ResResult) {
-	cclient = GetChannelClient()
-	if cclient == nil {
+	if org3ChannelClient == nil {
 		res.Code = 1
 		res.Status = "Chaincode service uninitialed."
 		return
 	}
-	bs, err := CCquery(cclient, ccEstatetax, "queryByTaxID", []string{taxid})
+	bs, err := CCquery(org3ChannelClient, ccEstatetax, "queryByTaxID", []string{taxid})
 	if err != nil {
 		res.Code = 1
 		res.Status = err.Error()
@@ -86,13 +84,12 @@ func EstateTaxQueryByTaxid(taxid string) (res comm.ResResult) {
 }
 
 func EstateTaxQueryAll() (res comm.ResResult) {
-	cclient = GetChannelClient()
-	if cclient == nil {
+	if org3ChannelClient == nil {
 		res.Code = 1
 		res.Status = "Chaincode service uninitialed."
 		return
 	}
-	bs, err := CCquery(cclient, ccEstatetax, "queryAll", nil)
+	bs, err := CCquery(org3ChannelClient, ccEstatetax, "queryAll", nil)
 	if err != nil {
 		res.Code = 1
 		res.Status = err.Error()

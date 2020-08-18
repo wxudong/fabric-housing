@@ -29,8 +29,7 @@ type CEstateBook struct {
 }
 
 func EstateBookCreate(uuid, bookid, owener, addr, area string) (res comm.ResResult) {
-	cclient = GetChannelClient()
-	if cclient == nil {
+	if org2ChannelClient == nil {
 		res.Code = 1
 		res.Status = "Chaincode service uninitialed."
 		return
@@ -47,7 +46,7 @@ func EstateBookCreate(uuid, bookid, owener, addr, area string) (res comm.ResResu
 		return
 	}
 	//new
-	bs, err := CCinvoke(cclient, ccEstateBook, "create",
+	bs, err := CCinvoke(org2ChannelClient, ccEstateBook, "create",
 		[]string{uuid, bookid, owener, addr, area})
 	if err != nil {
 		res.Code = 1
@@ -60,13 +59,12 @@ func EstateBookCreate(uuid, bookid, owener, addr, area string) (res comm.ResResu
 }
 
 func EstateBookQueryByBookid(bookid string) (res comm.ResResult) {
-	cclient = GetChannelClient()
-	if cclient == nil {
+	if org2ChannelClient == nil {
 		res.Code = 1
 		res.Status = "Chaincode service uninitialed."
 		return
 	}
-	bs, err := CCquery(cclient, ccEstateBook, "queryByBookID", []string{bookid})
+	bs, err := CCquery(org2ChannelClient, ccEstateBook, "queryByBookID", []string{bookid})
 	if err != nil {
 		res.Code = 1
 		res.Status = err.Error()
@@ -86,13 +84,12 @@ func EstateBookQueryByBookid(bookid string) (res comm.ResResult) {
 }
 
 func EstateBookQueryAll() (res comm.ResResult) {
-	cclient = GetChannelClient()
-	if cclient == nil {
+	if org2ChannelClient == nil {
 		res.Code = 1
 		res.Status = "Chaincode service uninitialed."
 		return
 	}
-	bs, err := CCquery(cclient, ccEstateBook, "queryAll", nil)
+	bs, err := CCquery(org2ChannelClient, ccEstateBook, "queryAll", nil)
 	if err != nil {
 		res.Code = 1
 		res.Status = err.Error()
